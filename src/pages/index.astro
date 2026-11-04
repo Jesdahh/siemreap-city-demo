@@ -1,338 +1,740 @@
 ---
-// The homepage. Each <section> below is one band of the page — ask the AI to
-// add, remove, or reorder them. Every `km` field / class="km" line is the Khmer
-// caption shown under the English.
+// The homepage: an interactive 3D scroll journey through Siem Reap.
+// Each <section> below is one "chapter" of the page — ask the AI to add,
+// remove, or reorder them. Temple details live in the TEMPLES list in the
+// <script> at the bottom. The styles for this page are in the <style> block.
 import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import Footer from '../components/Footer.astro';
-import { getDecks } from '../lib/decks';
-
-const steps = [
-  {
-    icon: '🧰',
-    title: 'Choose a stack',
-    titleKm: 'ជ្រើសរើស stack',
-    text: 'Pick the technology the AI will use. AI can help you choose. This week, it’s chosen for you.',
-    textKm: 'ជ្រើសរើសបច្ចេកវិទ្យាដែល AI នឹងប្រើ។ AI អាចជួយអ្នកជ្រើសរើសបាន។ សម្រាប់វគ្គនេះ យើងបានជ្រើសរើសរួចហើយ។',
-  },
-  {
-    icon: '💬',
-    title: 'Prompt',
-    titleKm: 'ប្រាប់ AI',
-    text: 'Describe the website you want, in plain words. English or Khmer.',
-    textKm: 'ពិពណ៌នាគេហទំព័រដែលអ្នកចង់បាន ជាពាក្យសាមញ្ញ។ ភាសាអង់គ្លេស ឬភាសាខ្មែរក៏បាន។',
-  },
-  {
-    icon: '🔁',
-    title: 'Iterate',
-    titleKm: 'កែលម្អម្តងហើយម្តងទៀត',
-    text: 'Check the result and tell the AI what to improve. Repeat! This is the real skill.',
-    textKm: 'ពិនិត្យលទ្ធផល ហើយប្រាប់ AI ពីអ្វីដែលត្រូវកែ។ ធ្វើម្តងទៀត! នេះគឺជាជំនាញពិតប្រាកដ។',
-  },
-  {
-    icon: '🚀',
-    title: 'Ship it',
-    titleKm: 'ដាក់ឱ្យប្រើ',
-    text: 'Publish it to the internet, free, at a link you can share.',
-    textKm: 'ដាក់វានៅលើអ៊ីនធឺណិត ដោយឥតគិតថ្លៃ ជាមួយតំណភ្ជាប់ដែលអ្នកអាចចែករំលែកបាន។',
-  },
-];
-
-const stats = [
-  { value: '0', label: 'lines of code to memorize', labelKm: 'បន្ទាត់កូដដែលត្រូវទន្ទេញ' },
-  { value: '1', label: 'live website each', labelKm: 'គេហទំព័រផ្ទាល់ខ្លួនម្នាក់មួយ' },
-  { value: '$0', label: 'to publish it', labelKm: 'ដើម្បីដាក់វាលើអ៊ីនធឺណិត' },
-];
-
-const needs = [
-  {
-    title: 'An idea',
-    titleKm: 'គំនិតមួយ',
-    text: 'A business, a project, a club — anything you would want a website for.',
-    textKm: 'អាជីវកម្ម គម្រោង ក្លឹប — អ្វីក៏បានដែលអ្នកចង់មានគេហទំព័រ។',
-  },
-  {
-    title: 'A Mac',
-    titleKm: 'កុំព្យូទ័រ Mac',
-    text: 'You will set it up yourself, with the AI as your guide.',
-    textKm: 'អ្នកនឹងរៀបចំវាដោយខ្លួនឯង ដោយមាន AI ជាអ្នកណែនាំ។',
-  },
-  {
-    title: 'A GitHub account',
-    titleKm: 'គណនី GitHub',
-    text: 'Free. This is where your website’s files are kept safe. We make it together on Day 1.',
-    textKm: 'ឥតគិតថ្លៃ។ ជាកន្លែងរក្សាទុកឯកសារគេហទំព័ររបស់អ្នកដោយសុវត្ថិភាព។ យើងបង្កើតវាជាមួយគ្នានៅថ្ងៃទី ១។',
-  },
-  {
-    title: 'A Cloudflare account',
-    titleKm: 'គណនី Cloudflare',
-    text: 'Free. This puts your website on the internet.',
-    textKm: 'ឥតគិតថ្លៃ។ វាដាក់គេហទំព័ររបស់អ្នកនៅលើអ៊ីនធឺណិត។',
-  },
-];
-
-const faqs = [
-  {
-    q: 'Do I need to know how to code?',
-    qKm: 'តើខ្ញុំត្រូវចេះសរសេរកូដទេ?',
-    a: 'No. You will see some code, and you will learn what it is, but the AI writes it. Your job is to know what you want and to say it clearly.',
-    aKm: 'ទេ។ អ្នកនឹងឃើញកូដខ្លះ ហើយនឹងរៀនថាវាជាអ្វី ប៉ុន្តែ AI ជាអ្នកសរសេរវា។ ការងាររបស់អ្នក គឺដឹងថាអ្នកចង់បានអ្វី ហើយនិយាយវាឱ្យបានច្បាស់។',
-  },
-  {
-    q: 'Can my website be in Khmer?',
-    qKm: 'តើគេហទំព័ររបស់ខ្ញុំអាចជាភាសាខ្មែរបានទេ?',
-    a: 'Yes. You can ask the AI to write in Khmer, or to make the site in both languages. Always have a Khmer speaker check the words — you know the language better than the AI does.',
-    aKm: 'បាន។ អ្នកអាចប្រាប់ AI ឱ្យសរសេរជាភាសាខ្មែរ ឬធ្វើគេហទំព័រជាពីរភាសា។ តែងតែឱ្យអ្នកចេះភាសាខ្មែរពិនិត្យពាក្យពេចន៍ — អ្នកស្គាល់ភាសានេះច្បាស់ជាង AI។',
-  },
-  {
-    q: 'Do I keep my website after the workshop?',
-    qKm: 'តើខ្ញុំនៅតែមានគេហទំព័ររបស់ខ្ញុំក្រោយវគ្គសិក្សាទេ?',
-    a: 'Yes. Everything is in your own GitHub and Cloudflare accounts. It is yours, and it stays online.',
-    aKm: 'បាទ/ចាស។ អ្វីៗទាំងអស់នៅក្នុងគណនី GitHub និង Cloudflare ផ្ទាល់ខ្លួនរបស់អ្នក។ វាជារបស់អ្នក ហើយវានៅតែដំណើរការលើអ៊ីនធឺណិត។',
-  },
-  {
-    q: 'What if the AI makes a mistake?',
-    qKm: 'ចុះបើ AI ធ្វើខុស?',
-    a: 'It will! Tell it what is wrong, the same way you would tell a person. If things get really messy, you can always go back to an earlier version.',
-    aKm: 'វានឹងធ្វើខុសម្តងម្កាល! ប្រាប់វាថាអ្វីខុស ដូចដែលអ្នកប្រាប់មនុស្សម្នាក់។ ប្រសិនបើអ្វីៗរញ៉េរញ៉ៃខ្លាំង អ្នកតែងតែអាចត្រឡប់ទៅកំណែមុនវិញបាន។',
-  },
-];
-
-const decks = getDecks();
 ---
 
 <Base>
-  <Header />
+<!-- PAGE:START -->
+<div class="sr">
+  <div class="sr-progress" aria-hidden="true"><span></span></div>
+  <canvas class="sr-fireflies" aria-hidden="true"></canvas>
 
-  <main>
-    <!-- HERO -->
-    <section class="relative overflow-hidden">
-      <div class="pointer-events-none absolute -top-40 -right-40 size-[36rem] rounded-full bg-sun/25 blur-3xl"></div>
-      <div class="pointer-events-none absolute -bottom-40 -left-40 size-[30rem] rounded-full bg-brand/15 blur-3xl"></div>
+  <!-- NAV -->
+  <header class="sr-nav">
+    <a href="#top" class="sr-logo">
+      <span class="sr-logo-mark" aria-hidden="true"></span>
+      Siem Reap <span lang="km">សៀមរាប</span>
+    </a>
+    <nav>
+      <a href="#wonders">Wonders</a>
+      <a href="#time">Timeline</a>
+      <a href="#lake">Tonle Sap</a>
+      <a href="#taste">Taste</a>
+      <a href="#plan" class="sr-nav-cta">Plan a visit</a>
+    </nav>
+  </header>
 
-      <div class="relative mx-auto grid max-w-6xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-2">
-        <div>
-          <p class="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-white/70 px-3 py-1 text-sm font-medium">
-            <span class="size-2 rounded-full bg-leaf"></span>
-            A vibe coding workshop at New Hope Cambodia
-          </p>
-          <h1 class="mt-6 font-display text-5xl leading-[1.02] font-extrabold tracking-tight text-balance sm:text-6xl lg:text-7xl">
-            Build a real website by <span class="text-brand">talking</span> to AI.
-          </h1>
-          <p lang="km" class="mt-4 text-xl text-ink/70">បង្កើតគេហទំព័រជាមួយ AI</p>
-          <p class="mt-6 max-w-xl text-lg text-muted">
-            No coding experience needed. Describe the website you want, watch the AI build it, and publish it to the internet by the end of the week.
-            <span class="km" lang="km">មិនចាំបាច់មានបទពិសោធន៍សរសេរកូដទេ។ ពិពណ៌នាគេហទំព័រដែលអ្នកចង់បាន មើល AI បង្កើតវា ហើយដាក់វានៅលើអ៊ីនធឺណិតត្រឹមចុងសប្តាហ៍។</span>
-          </p>
-          <div class="mt-8 flex flex-wrap gap-3">
-            <a href="/lesson" class="rounded-full bg-brand px-6 py-3 font-semibold text-paper shadow-lg shadow-brand/25 transition hover:bg-brand-dark">
-              See the lessons → <span lang="km" class="font-khmer font-normal opacity-80">មេរៀន</span>
-            </a>
-            <a href="#how" class="rounded-full border border-ink/15 bg-white px-6 py-3 font-semibold transition hover:border-ink/40">
-              How it works <span lang="km" class="font-khmer font-normal opacity-60">របៀបដំណើរការ</span>
-            </a>
-          </div>
+  <!-- HERO: layered 3D scene that moves with scroll and mouse -->
+  <section id="top" class="sr-hero">
+    <div class="sr-scene">
+      <div class="sr-sun" data-depth="0.15"></div>
+      <svg class="sr-layer" data-depth="0.25" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <path d="M0 640 C200 560 380 600 560 570 C760 535 900 600 1100 560 C1300 520 1450 585 1600 560 L1600 900 L0 900Z" fill="url(#hill)" opacity=".55"/>
+        <defs>
+          <linearGradient id="hill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3ee6c1" stop-opacity=".35"/><stop offset="1" stop-color="#062a22"/></linearGradient>
+          <linearGradient id="temple" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e3b31"/><stop offset="1" stop-color="#03130f"/></linearGradient>
+        </defs>
+      </svg>
+      <svg class="sr-layer sr-temple" data-depth="0.45" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <g fill="url(#temple)" transform="translate(800 720) scale(.72) translate(-800 -720)">
+          <!-- terraces -->
+          <rect x="420" y="640" width="760" height="40" rx="2"/>
+          <rect x="480" y="600" width="640" height="44"/>
+          <rect x="560" y="560" width="480" height="44"/>
+          <!-- five lotus-bud towers (Angkor Wat) -->
+          <path d="M560 604 L572 470 Q600 380 628 470 L640 604Z"/>
+          <path d="M960 604 L972 470 Q1000 380 1028 470 L1040 604Z"/>
+          <path d="M640 564 L654 420 Q690 320 726 420 L740 564Z"/>
+          <path d="M860 564 L874 420 Q910 320 946 420 L960 564Z"/>
+          <path d="M740 564 L756 360 Q800 220 844 360 L860 564Z"/>
+          <rect x="796" y="200" width="8" height="40"/>
+          <rect x="686" y="300" width="8" height="30"/>
+          <rect x="906" y="300" width="8" height="30"/>
+          <!-- causeway -->
+          <rect x="770" y="680" width="60" height="40"/>
+        </g>
+      </svg>
+      <svg class="sr-layer sr-reflect" data-depth="0.45" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <rect x="0" y="720" width="1600" height="180" fill="url(#water)"/>
+        <defs><linearGradient id="water" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff9a5a" stop-opacity=".35"/><stop offset=".5" stop-color="#3ee6c1" stop-opacity=".15"/><stop offset="1" stop-color="#03130f"/></linearGradient></defs>
+        <g fill="#062a22" opacity=".45" transform="translate(800 720) scale(.72 -.72) translate(-800 -720)">
+          <path d="M740 724 L756 520 Q800 380 844 520 L860 724Z"/>
+          <path d="M640 724 L654 580 Q690 480 726 580 L740 724Z"/>
+          <path d="M860 724 L874 580 Q910 480 946 580 L960 724Z"/>
+        </g>
+      </svg>
+      <svg class="sr-layer" data-depth="0.8" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+        <g fill="#020c09">
+          <!-- sugar palms, the tree of Cambodia -->
+          <g transform="translate(150 260)"><rect x="-6" y="0" width="12" height="640"/><g class="sr-palm"><ellipse cx="0" cy="0" rx="90" ry="22"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(40)"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(-40)"/><ellipse cx="0" cy="0" rx="80" ry="20" transform="rotate(80)"/></g></g>
+          <g transform="translate(300 380) scale(.75)"><rect x="-6" y="0" width="12" height="700"/><g class="sr-palm"><ellipse cx="0" cy="0" rx="90" ry="22"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(40)"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(-40)"/><ellipse cx="0" cy="0" rx="80" ry="20" transform="rotate(80)"/></g></g>
+          <g transform="translate(1420 300) scale(.9)"><rect x="-6" y="0" width="12" height="700"/><g class="sr-palm"><ellipse cx="0" cy="0" rx="90" ry="22"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(40)"/><ellipse cx="0" cy="0" rx="90" ry="22" transform="rotate(-40)"/><ellipse cx="0" cy="0" rx="80" ry="20" transform="rotate(80)"/></g></g>
+          <path d="M0 860 Q200 800 420 850 T900 840 T1600 830 L1600 900 L0 900Z"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="sr-hero-copy" data-depth="-0.3">
+      <p class="sr-eyebrow">Cambodia · Gateway to Angkor</p>
+      <h1>
+        <span class="sr-grad">Siem Reap</span>
+        <span class="sr-hero-km" lang="km">សៀមរាប</span>
+      </h1>
+      <p class="sr-lede">Where the jungle keeps the temples. Scroll to travel through a thousand years of stone, water and green.</p>
+      <div class="sr-hero-cta">
+        <a href="#wonders" class="sr-btn">Start the journey ↓</a>
+        <a href="#plan" class="sr-btn sr-btn-ghost">Plan a visit</a>
+      </div>
+    </div>
+    <div class="sr-scroll-hint" aria-hidden="true"><span></span></div>
+  </section>
+
+  <!-- STATS -->
+  <section class="sr-stats">
+    <div class="sr-wrap sr-stat-grid">
+      <div class="sr-glass sr-stat tilt-in"><b data-count="1992">0</b><span>Angkor named a UNESCO World Heritage Site</span></div>
+      <div class="sr-glass sr-stat tilt-in"><b data-count="400" data-suffix=" km²">0</b><span>Angkor Archaeological Park</span></div>
+      <div class="sr-glass sr-stat tilt-in"><b data-count="802" data-prefix="AD ">0</b><span>Khmer Empire founded on Phnom Kulen</span></div>
+      <div class="sr-glass sr-stat tilt-in"><b data-count="16000" data-suffix=" km²">0</b><span>Tonle Sap lake at its rainy-season peak</span></div>
+    </div>
+  </section>
+
+  <!-- WONDERS: 3D ring carousel driven by scroll -->
+  <section id="wonders" class="sr-ring-section">
+    <div class="sr-sticky">
+      <div class="sr-wrap sr-section-head">
+        <p class="sr-eyebrow">Chapter 1 · Wonders</p>
+        <h2>Six places, <span class="sr-grad">one circle of stone</span></h2>
+        <p class="sr-muted">Keep scrolling to turn the ring. Tap a card to open its story.</p>
+      </div>
+      <div class="sr-stage">
+        <div class="sr-ring" aria-live="polite"></div>
+      </div>
+      <div class="sr-ring-ui">
+        <button class="sr-round" data-ring="-1" aria-label="Previous place">←</button>
+        <div class="sr-ring-dots"></div>
+        <button class="sr-round" data-ring="1" aria-label="Next place">→</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIMELINE: horizontal track pinned while you scroll -->
+  <section id="time" class="sr-h-section">
+    <div class="sr-sticky">
+      <div class="sr-wrap sr-section-head">
+        <p class="sr-eyebrow">Chapter 2 · Time</p>
+        <h2>Twelve centuries <span class="sr-grad">in one scroll</span></h2>
+      </div>
+      <div class="sr-h-track">
+        <article class="sr-glass sr-era"><b>802</b><h3>A god-king is crowned</h3><p>Jayavarman II declares himself universal ruler on Phnom Kulen, the sacred mountain. The Khmer Empire begins.</p></article>
+        <article class="sr-glass sr-era"><b>889</b><h3>The first capital at Angkor</h3><p>Yasovarman I builds Yasodharapura around the hill temple of Phnom Bakheng, still a famous sunset spot.</p></article>
+        <article class="sr-glass sr-era"><b>11th c.</b><h3>Engineering water</h3><p>The West Baray, a reservoir about 8 km long, is dug. Angkor becomes a city run on canals and moats.</p></article>
+        <article class="sr-glass sr-era"><b>1113–1150</b><h3>Angkor Wat rises</h3><p>Suryavarman II builds the largest religious monument on Earth, dedicated to the Hindu god Vishnu.</p></article>
+        <article class="sr-glass sr-era"><b>1181–1218</b><h3>The great builder</h3><p>Jayavarman VII builds Angkor Thom, the Bayon, Ta Prohm, hospitals and roads across the empire.</p></article>
+        <article class="sr-glass sr-era"><b>1431</b><h3>The court moves south</h3><p>After wars with Ayutthaya, the capital shifts toward Phnom Penh. Monks keep Angkor Wat alive.</p></article>
+        <article class="sr-glass sr-era"><b>1860</b><h3>Told to the world</h3><p>French explorer Henri Mouhot’s journals bring Angkor to wide attention in Europe.</p></article>
+        <article class="sr-glass sr-era"><b>1907</b><h3>Siem Reap returns</h3><p>A Franco-Siamese treaty returns Siem Reap province to Cambodia.</p></article>
+        <article class="sr-glass sr-era"><b>1992</b><h3>World Heritage</h3><p>UNESCO lists Angkor. Restoration teams from many countries begin work.</p></article>
+        <article class="sr-glass sr-era"><b>2023</b><h3>A new gateway</h3><p>Siem Reap–Angkor International Airport opens, welcoming a new generation of visitors.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <!-- TONLE SAP: interactive lake slider -->
+  <section id="lake" class="sr-wrap sr-lake">
+    <div class="sr-lake-copy tilt-in">
+      <p class="sr-eyebrow">Chapter 3 · Water</p>
+      <h2>The lake that <span class="sr-grad">breathes</span></h2>
+      <p class="sr-muted">Every rainy season the Mekong pushes so much water upstream that the Tonle Sap River <b>reverses direction</b>. The lake swells to about six times its size, flooding forests and feeding one of the world’s richest inland fisheries.</p>
+      <label class="sr-slider-label" for="month">Drag through the year</label>
+      <input id="month" type="range" min="0" max="11" value="3" />
+      <div class="sr-months" aria-hidden="true"><span>Jan</span><span>Apr</span><span>Jul</span><span>Oct</span><span>Dec</span></div>
+      <div class="sr-lake-read">
+        <div><small>Month</small><b data-lake="month">April</b></div>
+        <div><small>Lake area*</small><b data-lake="area">2,700 km²</b></div>
+        <div><small>Season</small><b data-lake="season">Dry</b></div>
+      </div>
+      <p class="sr-note">*Approximate. The lake ranges from about 2,500 km² to 16,000 km², and from about 1 m to 9 m deep.</p>
+    </div>
+    <div class="sr-lake-viz sr-glass tilt-in" aria-hidden="true">
+      <svg viewBox="0 0 400 400">
+        <defs>
+          <radialGradient id="lakeG" cx=".4" cy=".35" r=".8"><stop offset="0" stop-color="#7ef9de"/><stop offset=".6" stop-color="#1fb5a0"/><stop offset="1" stop-color="#0b5d63"/></radialGradient>
+          <filter id="blur"><feGaussianBlur stdDeviation="2"/></filter>
+        </defs>
+        <g class="sr-lake-shape" style="transform-origin:200px 200px">
+          <path d="M120 90 C200 40 320 70 340 160 C360 250 300 330 210 340 C120 350 60 290 60 210 C60 150 80 115 120 90Z" fill="url(#lakeG)" filter="url(#blur)"/>
+          <path class="sr-wave" d="M90 200 Q130 185 170 200 T250 200 T330 200" stroke="#ffffff55" stroke-width="3" fill="none"/>
+          <path class="sr-wave sr-wave2" d="M100 240 Q140 225 180 240 T260 240 T320 240" stroke="#ffffff33" stroke-width="3" fill="none"/>
+        </g>
+        <!-- floating village houses -->
+        <g class="sr-houses" fill="#ffd27a">
+          <path d="M160 200 l12 -12 l12 12 v14 h-24z"/><path d="M200 214 l12 -12 l12 12 v14 h-24z"/><path d="M236 196 l12 -12 l12 12 v14 h-24z"/>
+        </g>
+      </svg>
+      <p class="sr-lake-tag">Floating & stilt villages: Kampong Phluk, Chong Kneas, Kampong Khleang</p>
+    </div>
+  </section>
+
+  <!-- TASTE: 3D flip cards -->
+  <section id="taste" class="sr-wrap sr-taste">
+    <div class="sr-section-head tilt-in">
+      <p class="sr-eyebrow">Chapter 4 · Taste</p>
+      <h2>Eat like <span class="sr-grad">a local</span></h2>
+      <p class="sr-muted">Hover or tap a card to flip it.</p>
+    </div>
+    <div class="sr-flip-grid">
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🐟</i><b>Fish Amok</b><em lang="km">អាម៉ុក</em></span><span class="sr-back">Fish steamed in banana leaf with coconut milk and <i>kroeung</i>, a fresh paste of lemongrass, turmeric and galangal.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍜</i><b>Num Banh Chok</b><em lang="km">នំបញ្ចុក</em></span><span class="sr-back">Fresh rice noodles with green fish curry and raw herbs. The classic Khmer breakfast, sold from baskets at dawn.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥩</i><b>Lok Lak</b><em lang="km">ឡុកឡាក់</em></span><span class="sr-back">Stir-fried beef cubes over lettuce and tomato, dipped in lime juice with Kampot black pepper.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🎋</i><b>Kralan</b><em lang="km">ក្រឡាន</em></span><span class="sr-back">Sticky rice, beans and coconut roasted inside bamboo tubes. Look for roadside stalls on the way to Banteay Srei.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍛</i><b>Khmer Red Curry</b><em lang="km">ការី</em></span><span class="sr-back">Mild coconut curry with sweet potato and chicken, often eaten with baguette. Made for weddings and festivals.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥥</i><b>Nom Krok</b><em lang="km">នំគ្រក</em></span><span class="sr-back">Little coconut-rice cakes, crispy outside and soft inside, cooked in a clay pan over charcoal.</span></span></button>
+    </div>
+  </section>
+
+  <!-- PLAN -->
+  <section id="plan" class="sr-wrap sr-plan">
+    <div class="sr-section-head tilt-in">
+      <p class="sr-eyebrow">Chapter 5 · Go</p>
+      <h2>Plan your <span class="sr-grad">visit</span></h2>
+    </div>
+    <div class="sr-plan-grid">
+      <div class="sr-glass sr-season tilt-in">
+        <div class="sr-tabs" role="tablist">
+          <button role="tab" aria-selected="true" data-season="0">Cool & dry</button>
+          <button role="tab" aria-selected="false" data-season="1">Hot</button>
+          <button role="tab" aria-selected="false" data-season="2">Green</button>
         </div>
-
-        <!-- Illustration: a prompt on the left becomes a website on the right -->
-        <div class="relative" aria-hidden="true">
-          <div class="rounded-2xl bg-ink p-5 font-mono text-sm text-paper shadow-2xl">
-            <div class="mb-4 flex gap-1.5">
-              <span class="size-3 rounded-full bg-brand"></span>
-              <span class="size-3 rounded-full bg-sun"></span>
-              <span class="size-3 rounded-full bg-leaf"></span>
-            </div>
-            <p class="text-sun">&gt; Make a website for my family's bakery in Phnom Penh.</p>
-            <p class="mt-1 text-sun">&nbsp;&nbsp;Warm colors, our menu, and a map.</p>
-            <p class="mt-3 text-paper/60">✓ Created homepage</p>
-            <p class="text-paper/60">✓ Added menu with 6 items</p>
-            <p class="text-paper/60">✓ Added map and opening hours</p>
-            <p class="mt-3 animate-pulse">▍</p>
-          </div>
-          <div class="relative -mt-6 mr-2 ml-auto w-60 rotate-[3deg] rounded-xl border border-ink/10 bg-white p-4 shadow-xl sm:w-72">
-            <div class="h-20 rounded-lg bg-gradient-to-br from-sun to-brand"></div>
-            <p class="mt-3 font-display font-bold">Sokha's Bakery</p>
-            <p class="text-xs text-muted">Fresh bread every morning since 1998</p>
-            <div class="mt-3 grid grid-cols-3 gap-2">
-              <div class="h-8 rounded bg-paper"></div>
-              <div class="h-8 rounded bg-paper"></div>
-              <div class="h-8 rounded bg-paper"></div>
-            </div>
-          </div>
+        <div class="sr-season-body">
+          <b class="sr-season-temp">20–31°C</b>
+          <h3 class="sr-season-title">November – February</h3>
+          <p class="sr-season-text">The most popular time. Clear sunrises over Angkor Wat, cool mornings and blue skies. Book rooms early.</p>
         </div>
       </div>
-    </section>
+      <div class="sr-passes">
+        <div class="sr-glass sr-pass tilt-in"><small>Angkor Pass</small><b>$37</b><span>1 day</span></div>
+        <div class="sr-glass sr-pass sr-pass-hot tilt-in"><small>Angkor Pass</small><b>$62</b><span>3 days · use within 10 days</span></div>
+        <div class="sr-glass sr-pass tilt-in"><small>Angkor Pass</small><b>$72</b><span>7 days · use within 1 month</span></div>
+        <p class="sr-note">Prices may change. Buy only at the official Angkor ticket office. US dollars and Cambodian riel are both used in town.</p>
+      </div>
+      <ul class="sr-tips tilt-in">
+        <li><b>🌅 Sunrise</b> Arrive at Angkor Wat’s reflecting pool by 5:00.</li>
+        <li><b>👕 Dress</b> Cover shoulders and knees to climb the upper temples.</li>
+        <li><b>🛺 Get around</b> Hire a tuk-tuk for the day, or cycle the small circuit.</li>
+        <li><b>🎪 Night</b> Pub Street, the Night Market, and Phare, the Cambodian Circus.</li>
+      </ul>
+    </div>
+  </section>
 
-    <!-- STATS -->
-    <section class="border-y border-ink/10 bg-white">
-      <dl class="mx-auto grid max-w-6xl grid-cols-2 gap-8 px-4 py-10 sm:px-6 md:grid-cols-3">
-        {
-          stats.map((s) => (
-            <div>
-              <dt class="sr-only">{s.label}</dt>
-              <dd class="font-display text-4xl font-extrabold text-brand">{s.value}</dd>
-              <dd class="mt-1 text-sm text-muted">
-                {s.label}
-                <span class="km" lang="km">{s.labelKm}</span>
-              </dd>
-            </div>
-          ))
+  <footer class="sr-footer">
+    <p class="sr-grad sr-footer-big" lang="km">សូមស្វាគមន៍</p>
+    <p>Welcome to Siem Reap. A demo website made by talking to AI.</p>
+  </footer>
+
+  <!-- Detail popup for the ring cards -->
+  <dialog class="sr-modal">
+    <div class="sr-modal-art" aria-hidden="true"></div>
+    <div class="sr-modal-body">
+      <button class="sr-modal-close" aria-label="Close">✕</button>
+      <p class="sr-eyebrow sr-m-kicker"></p>
+      <h3 class="sr-m-name"></h3>
+      <p class="sr-m-km" lang="km"></p>
+      <dl class="sr-m-meta"></dl>
+      <p class="sr-m-text"></p>
+      <ul class="sr-m-facts"></ul>
+      <p class="sr-m-tip"></p>
+    </div>
+  </dialog>
+</div>
+
+<style is:global>
+  :root {
+    --sr-bg: #03130f;
+    --sr-deep: #062a22;
+    --sr-mint: #3ee6c1;
+    --sr-lime: #b4f461;
+    --sr-gold: #ffb347;
+    --sr-lotus: #ff7eb6;
+    --sr-text: #eafff7;
+    --sr-muted: #9cc7ba;
+    --sr-glass: rgba(255, 255, 255, 0.06);
+    --sr-line: rgba(180, 244, 97, 0.18);
+  }
+  html { background: var(--sr-bg); color: var(--sr-text); scroll-behavior: smooth; }
+  body { background: var(--sr-bg); overflow-x: hidden; }
+  .sr { font-family: "Inter Variable", "Inter", "Kantumruy Pro Variable", "Kantumruy Pro", system-ui, sans-serif; position: relative; }
+  .sr h1, .sr h2, .sr h3, .sr-logo, .sr-stat b, .sr-era b, .sr-pass b { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", "Kantumruy Pro Variable", "Kantumruy Pro", system-ui, sans-serif; }
+  .sr [lang="km"] { font-family: "Kantumruy Pro Variable", "Kantumruy Pro", system-ui, sans-serif; }
+  .sr-wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+  @media (min-width: 640px) { .sr-wrap { padding: 0 32px; } }
+
+  .sr-grad {
+    background: linear-gradient(100deg, var(--sr-lime), var(--sr-mint) 40%, var(--sr-gold) 75%, var(--sr-lotus));
+    background-size: 200% 100%;
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: sr-shimmer 8s ease-in-out infinite alternate;
+  }
+  @keyframes sr-shimmer { to { background-position: 100% 0; } }
+  .sr-eyebrow { color: var(--sr-lime); font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: .78rem; }
+  .sr-muted { color: var(--sr-muted); font-size: 1.08rem; line-height: 1.65; }
+  .sr-note { color: var(--sr-muted); font-size: .82rem; opacity: .8; margin-top: 12px; }
+  .sr h2 { font-size: clamp(2.1rem, 5.5vw, 4rem); line-height: 1.02; font-weight: 800; letter-spacing: -.02em; margin: 10px 0 14px; }
+  .sr-section-head { text-align: center; max-width: 760px; margin: 0 auto; }
+  .sr-glass {
+    background: linear-gradient(145deg, rgba(255,255,255,.09), rgba(255,255,255,.02));
+    border: 1px solid var(--sr-line);
+    border-radius: 24px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  /* progress + fireflies */
+  .sr-progress { position: fixed; inset: 0 0 auto 0; height: 3px; z-index: 60; }
+  .sr-progress span { display: block; height: 100%; width: 100%; transform-origin: left; transform: scaleX(0); background: linear-gradient(90deg, var(--sr-lime), var(--sr-mint), var(--sr-gold), var(--sr-lotus)); }
+  .sr-fireflies { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+
+  /* nav */
+  .sr-nav { position: fixed; top: 12px; left: 50%; transform: translateX(-50%); z-index: 50; width: min(1100px, calc(100% - 24px)); display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 8px 8px 8px 16px; border-radius: 999px; background: rgba(3, 19, 15, .55); border: 1px solid var(--sr-line); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); }
+  .sr-logo { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--sr-text); text-decoration: none; white-space: nowrap; }
+  .sr-logo [lang="km"] { color: var(--sr-mint); font-weight: 500; font-size: .9em; }
+  .sr-logo-mark { width: 22px; height: 22px; border-radius: 7px; background: conic-gradient(from 200deg, var(--sr-lime), var(--sr-mint), var(--sr-gold), var(--sr-lotus), var(--sr-lime)); box-shadow: 0 0 18px var(--sr-mint); }
+  .sr-nav nav { display: flex; gap: 2px; }
+  .sr-nav nav a { color: var(--sr-muted); text-decoration: none; font-size: .9rem; padding: 8px 12px; border-radius: 999px; transition: .25s; }
+  .sr-nav nav a:hover { color: var(--sr-text); background: rgba(255,255,255,.06); }
+  .sr-nav nav a:not(.sr-nav-cta) { display: none; }
+  @media (min-width: 820px) { .sr-nav nav a:not(.sr-nav-cta) { display: inline-block; } }
+  .sr .sr-nav-cta { color: var(--sr-bg) !important; background: linear-gradient(90deg, var(--sr-lime), var(--sr-mint)); font-weight: 700; }
+  @media (max-width: 420px) { .sr-logo [lang="km"] { display: none; } }
+
+  /* buttons */
+  .sr-btn { display: inline-flex; align-items: center; gap: 8px; padding: 14px 24px; border-radius: 999px; font-weight: 700; text-decoration: none; color: var(--sr-bg); background: linear-gradient(90deg, var(--sr-lime), var(--sr-mint)); box-shadow: 0 10px 40px -10px var(--sr-mint); transition: transform .25s, box-shadow .25s; }
+  .sr-btn:hover { transform: translateY(-3px); box-shadow: 0 16px 50px -10px var(--sr-mint); }
+  .sr-btn-ghost { background: rgba(255,255,255,.06); color: var(--sr-text); border: 1px solid var(--sr-line); box-shadow: none; }
+  .sr-round { width: 48px; height: 48px; border-radius: 50%; border: 1px solid var(--sr-line); background: var(--sr-glass); color: var(--sr-text); font-size: 1.2rem; cursor: pointer; transition: .2s; }
+  .sr-round:hover { background: var(--sr-mint); color: var(--sr-bg); }
+
+  /* hero */
+  .sr-hero { position: relative; height: 100vh; height: 100svh; min-height: 560px; overflow: hidden; perspective: 1000px;
+    background: radial-gradient(ellipse at 50% 70%, rgba(255,154,90,.55), transparent 55%), linear-gradient(180deg, #0a2b3f 0%, #155e63 35%, #ff8a5c 72%, #ffcf7a 82%, #03130f 83%); }
+  .sr-scene { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .sr-layer { position: absolute; inset: 0; width: 100%; height: 100%; will-change: transform; }
+  .sr-sun { position: absolute; left: 50%; top: 52%; width: 34vmin; height: 34vmin; margin: -17vmin 0 0 -17vmin; border-radius: 50%; background: radial-gradient(circle at 50% 45%, #fff4c8, #ffd27a 40%, #ff9a5a 70%, transparent 72%); filter: blur(1px); box-shadow: 0 0 120px 40px rgba(255,180,90,.45); will-change: transform; }
+  .sr-palm { animation: sr-sway 6s ease-in-out infinite alternate; transform-origin: center; }
+  @keyframes sr-sway { from { transform: rotate(-4deg); } to { transform: rotate(4deg); } }
+  .sr-hero-copy { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; padding: 18vh 16px 0; text-align: center; z-index: 3; will-change: transform, opacity; }
+  .sr-hero h1 { font-size: clamp(3.6rem, 15vw, 11rem); font-weight: 800; line-height: .9; letter-spacing: -.04em; margin: 12px 0 0; filter: drop-shadow(0 10px 30px rgba(0,0,0,.35)); }
+  .sr-hero-km { display: block; font-size: .32em; letter-spacing: 0; color: #fff8e6; font-weight: 600; margin-top: .25em; line-height: 1.6; }
+  .sr-lede { max-width: 560px; font-size: clamp(1rem, 2.4vw, 1.25rem); color: #f2fff9; text-shadow: 0 2px 12px rgba(0,0,0,.5); margin: 10px 0 26px; }
+  .sr-hero-cta { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+  .sr-hero .sr-eyebrow { color: #fff8e6; }
+  .sr-scroll-hint { position: absolute; bottom: 24px; left: 50%; width: 26px; height: 42px; margin-left: -13px; border: 2px solid rgba(255,255,255,.6); border-radius: 14px; z-index: 4; }
+  .sr-scroll-hint span { position: absolute; left: 50%; top: 8px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: #fff; animation: sr-drop 1.6s infinite; }
+  @keyframes sr-drop { to { transform: translateY(14px); opacity: 0; } }
+
+  /* stats */
+  .sr-stats { position: relative; z-index: 2; margin-top: -60px; }
+  .sr-stat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; }
+  @media (min-width: 900px) { .sr-stat-grid { grid-template-columns: repeat(4, 1fr); gap: 18px; } }
+  .sr-stat { padding: 22px 18px; }
+  .sr-stat b { display: block; font-size: clamp(1.6rem, 4vw, 2.6rem); font-weight: 800; background: linear-gradient(90deg, var(--sr-lime), var(--sr-mint)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sr-stat span { color: var(--sr-muted); font-size: .9rem; }
+
+  /* tilt-in (3D scroll reveal), set by JS */
+  .tilt-in { will-change: transform, opacity; }
+
+  /* ring section */
+  .sr-ring-section { position: relative; height: 420vh; margin-top: 120px; }
+  .sr-sticky { position: sticky; top: 0; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: center; overflow: hidden; padding-top: 70px; }
+  .sr-stage { position: relative; height: min(56vh, 460px); perspective: 1400px; display: grid; place-items: center; }
+  .sr-ring { position: relative; width: var(--card-w); height: calc(var(--card-w) * 1.35); transform-style: preserve-3d; --card-w: 200px; }
+  @media (min-width: 700px) { .sr-ring { --card-w: 250px; } }
+  .sr-card { position: absolute; inset: 0; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; justify-content: flex-end; color: var(--sr-text); text-align: left; cursor: pointer; border: 1px solid rgba(255,255,255,.18); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: filter .4s, box-shadow .4s; font: inherit; }
+  .sr-card svg { position: absolute; inset: 0; width: 100%; height: 70%; opacity: .95; }
+  .sr-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(3,19,15,.85)); z-index: 0; }
+  .sr-card > * { position: relative; z-index: 1; }
+  .sr-card small { color: var(--sr-lime); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: .68rem; }
+  .sr-card strong { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui; font-size: 1.45rem; line-height: 1.1; }
+  .sr-card em { font-style: normal; color: var(--sr-mint); font-size: .95rem; }
+  .sr-card .sr-open { margin-top: 8px; font-size: .8rem; color: var(--sr-muted); }
+  .sr-card.is-active { box-shadow: 0 0 0 2px var(--sr-mint), 0 30px 80px -10px rgba(62,230,193,.5); }
+  .sr-card:not(.is-active) { filter: saturate(.6) brightness(.7); }
+  .sr-ring-ui { display: flex; align-items: center; justify-content: center; gap: 16px; margin-top: 10px; }
+  .sr-ring-dots { display: flex; gap: 8px; }
+  .sr-ring-dots button { width: 10px; height: 10px; padding: 0; border-radius: 99px; border: 0; background: rgba(255,255,255,.25); cursor: pointer; transition: .3s; }
+  .sr-ring-dots button.on { width: 28px; background: var(--sr-mint); }
+
+  /* horizontal timeline */
+  .sr-h-section { position: relative; }
+  .sr-h-track { display: flex; gap: 20px; padding: 30px 16px 0; width: max-content; will-change: transform; }
+  @media (min-width: 640px) { .sr-h-track { padding-left: max(32px, calc((100vw - 1180px) / 2 + 32px)); } }
+  .sr-era { width: min(78vw, 330px); padding: 26px; flex-shrink: 0; transform-style: preserve-3d; transition: border-color .3s; position: relative; }
+  .sr-era:hover { border-color: var(--sr-mint); }
+  .sr-era b { display: block; font-size: 2.6rem; font-weight: 800; background: linear-gradient(90deg, var(--sr-gold), var(--sr-lotus)); -webkit-background-clip: text; background-clip: text; color: transparent; line-height: 1; }
+  .sr-era h3 { font-size: 1.3rem; margin: 14px 0 8px; }
+  .sr-era p { color: var(--sr-muted); line-height: 1.6; }
+  .sr-era::before { content: ""; position: absolute; top: -18px; left: 26px; width: 12px; height: 12px; border-radius: 50%; background: var(--sr-mint); box-shadow: 0 0 16px var(--sr-mint); }
+
+  /* lake */
+  .sr-lake { display: grid; gap: 40px; align-items: center; padding-top: 120px; padding-bottom: 60px; }
+  @media (min-width: 900px) { .sr-lake { grid-template-columns: 1fr 1fr; } }
+  .sr-slider-label { display: block; margin-top: 26px; font-weight: 600; }
+  .sr input[type="range"] { width: 100%; margin-top: 12px; accent-color: var(--sr-mint); height: 28px; cursor: grab; }
+  .sr-months { display: flex; justify-content: space-between; color: var(--sr-muted); font-size: .8rem; }
+  .sr-lake-read { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 20px; }
+  .sr-lake-read div { background: var(--sr-glass); border: 1px solid var(--sr-line); border-radius: 16px; padding: 12px; }
+  .sr-lake-read small { display: block; color: var(--sr-muted); font-size: .75rem; }
+  .sr-lake-read b { font-size: 1.05rem; }
+  .sr-lake-viz { padding: 20px; text-align: center; }
+  .sr-lake-viz svg { width: 100%; max-width: 420px; }
+  .sr-lake-shape { transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+  .sr-houses { transition: transform .8s; }
+  .sr-wave { animation: sr-wave 3s ease-in-out infinite alternate; }
+  .sr-wave2 { animation-delay: -1.5s; }
+  @keyframes sr-wave { to { transform: translateX(12px); } }
+  .sr-lake-tag { color: var(--sr-muted); font-size: .9rem; }
+
+  /* taste */
+  .sr-taste { padding-top: 80px; padding-bottom: 60px; }
+  .sr-flip-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 36px; }
+  @media (min-width: 900px) { .sr-flip-grid { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
+  .sr-flip { perspective: 900px; background: none; border: 0; padding: 0; height: 220px; cursor: pointer; font: inherit; color: inherit; }
+  .sr-flip-in { position: relative; display: block; width: 100%; height: 100%; transition: transform .8s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+  .sr-flip:hover .sr-flip-in, .sr-flip:focus-visible .sr-flip-in, .sr-flip.flipped .sr-flip-in { transform: rotateY(180deg); }
+  .sr-front, .sr-back { position: absolute; inset: 0; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--sr-line); }
+  .sr-front { background: linear-gradient(160deg, rgba(180,244,97,.16), rgba(62,230,193,.06) 50%, rgba(255,126,182,.12)); }
+  .sr-front i { font-style: normal; font-size: 2.6rem; }
+  .sr-front b { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui; font-size: 1.2rem; }
+  .sr-front em { font-style: normal; color: var(--sr-mint); }
+  .sr-back { transform: rotateY(180deg); background: linear-gradient(160deg, #0f5c4a, #0a3a4a); color: #e8fff6; font-size: .92rem; line-height: 1.5; text-align: center; }
+  .sr-back i { color: var(--sr-gold); }
+
+  /* plan */
+  .sr-plan { padding-top: 80px; padding-bottom: 80px; }
+  .sr-plan-grid { display: grid; gap: 18px; margin-top: 36px; }
+  @media (min-width: 900px) { .sr-plan-grid { grid-template-columns: 1.1fr 1fr; } .sr-tips { grid-column: 1 / -1; } }
+  .sr-season { padding: 22px; }
+  .sr-tabs { display: flex; gap: 6px; background: rgba(0,0,0,.25); padding: 5px; border-radius: 999px; }
+  .sr-tabs button { flex: 1; padding: 10px; border-radius: 999px; border: 0; background: none; color: var(--sr-muted); font: inherit; font-weight: 600; cursor: pointer; transition: .3s; }
+  .sr-tabs button[aria-selected="true"] { background: linear-gradient(90deg, var(--sr-lime), var(--sr-mint)); color: var(--sr-bg); }
+  .sr-season-body { padding: 26px 6px 6px; transition: opacity .3s, transform .3s; }
+  .sr-season-body.swap { opacity: 0; transform: translateY(10px); }
+  .sr-season-temp { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui; font-size: 3rem; font-weight: 800; background: linear-gradient(90deg, var(--sr-gold), var(--sr-lotus)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+  .sr-season-title { font-size: 1.3rem; margin: 6px 0; }
+  .sr-season-text { color: var(--sr-muted); line-height: 1.6; }
+  .sr-passes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-content: start; }
+  .sr-passes .sr-note { grid-column: 1 / -1; }
+  .sr-pass { padding: 18px 12px; text-align: center; }
+  .sr-pass small { color: var(--sr-muted); font-size: .72rem; }
+  .sr-pass b { display: block; font-size: 2rem; font-weight: 800; }
+  .sr-pass span { font-size: .8rem; color: var(--sr-muted); }
+  .sr-pass-hot { border-color: var(--sr-mint); box-shadow: 0 0 40px -10px var(--sr-mint); }
+  .sr-tips { list-style: none; padding: 0; margin: 0; display: grid; gap: 10px; }
+  @media (min-width: 700px) { .sr-tips { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1000px) { .sr-tips { grid-template-columns: repeat(4, 1fr); } }
+  .sr-tips li { background: var(--sr-glass); border: 1px solid var(--sr-line); border-radius: 18px; padding: 16px; color: var(--sr-muted); line-height: 1.5; }
+  .sr-tips b { display: block; color: var(--sr-text); margin-bottom: 4px; }
+
+  .sr-footer { text-align: center; padding: 60px 16px 80px; color: var(--sr-muted); border-top: 1px solid var(--sr-line); }
+  .sr-footer-big { font-size: clamp(2.4rem, 8vw, 5rem); font-weight: 700; margin: 0 0 6px; line-height: 1.6; }
+
+  /* modal */
+  .sr-modal { width: min(880px, calc(100% - 24px)); max-height: calc(100% - 24px); padding: 0; border: 1px solid var(--sr-line); border-radius: 28px; background: #062019; color: var(--sr-text); overflow: auto; }
+  .sr-modal[open] { display: grid; animation: sr-pop .5s cubic-bezier(.2,.9,.2,1); }
+  @media (min-width: 760px) { .sr-modal[open] { grid-template-columns: .9fr 1.1fr; } }
+  .sr-modal::backdrop { background: rgba(2, 10, 8, .7); backdrop-filter: blur(8px); }
+  @keyframes sr-pop { from { opacity: 0; transform: perspective(900px) rotateX(18deg) translateY(40px) scale(.94); } }
+  .sr-modal-art { min-height: 200px; position: relative; }
+  .sr-modal-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sr-modal-body { padding: 26px; position: relative; }
+  .sr-modal-close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--sr-line); background: var(--sr-glass); color: var(--sr-text); cursor: pointer; font-size: 1rem; }
+  .sr-m-name { font-size: 2.2rem; margin: 6px 0 0; line-height: 1.05; }
+  .sr-m-km { color: var(--sr-mint); font-size: 1.2rem; margin: 2px 0 14px; }
+  .sr-m-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 0 0 16px; }
+  .sr-m-meta div { background: var(--sr-glass); border: 1px solid var(--sr-line); border-radius: 12px; padding: 8px 10px; }
+  .sr-m-meta dt { color: var(--sr-muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
+  .sr-m-meta dd { margin: 2px 0 0; font-weight: 600; font-size: .88rem; }
+  .sr-m-text { color: #cfeee4; line-height: 1.65; }
+  .sr-m-facts { padding-left: 0; list-style: none; display: grid; gap: 6px; margin: 14px 0; }
+  .sr-m-facts li { padding-left: 22px; position: relative; color: var(--sr-muted); line-height: 1.5; }
+  .sr-m-facts li::before { content: "◆"; position: absolute; left: 0; color: var(--sr-lime); font-size: .8rem; top: 2px; }
+  .sr-m-tip { background: linear-gradient(90deg, rgba(255,179,71,.15), rgba(255,126,182,.1)); border: 1px solid rgba(255,179,71,.3); border-radius: 14px; padding: 12px 14px; font-size: .92rem; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .sr *, .sr *::before, .sr *::after { animation: none !important; transition: none !important; }
+    html { scroll-behavior: auto; }
+  }
+</style>
+
+<script is:inline>
+(() => {
+  // ---------- TEMPLE DATA: edit text here ----------
+  const TEMPLES = [
+    { name: 'Angkor Wat', km: 'អង្គរវត្ត', kicker: 'The temple city', art: 'wat', colors: ['#ffb347', '#ff7eb6', '#2a1b4a'],
+      meta: [['Built', 'c. 1113–1150'], ['King', 'Suryavarman II'], ['Faith', 'Hindu → Buddhist']],
+      text: 'The largest religious monument in the world, built as a model of Mount Meru, home of the gods. It began as a temple to Vishnu and later became Buddhist. It has never been fully abandoned.',
+      facts: ['Its five lotus-bud towers appear on Cambodia’s national flag.', 'The central tower rises about 65 m above the ground.', 'A moat about 190 m wide surrounds it.', 'Long galleries show the famous Churning of the Ocean of Milk.'],
+      tip: '🌅 Sunrise over the north reflecting pool is magic, especially near the spring equinox.' },
+    { name: 'Bayon', km: 'បាយ័ន', kicker: 'Temple of faces', art: 'face', colors: ['#3ee6c1', '#b4f461', '#0b3d4a'],
+      meta: [['Built', 'Late 12th c.'], ['King', 'Jayavarman VII'], ['Faith', 'Mahayana Buddhist']],
+      text: 'The heart of the walled city of Angkor Thom. More than 200 calm, smiling stone faces look out from its towers in every direction.',
+      facts: ['Angkor Thom covers about 9 km², with five great gates.', 'Bas-reliefs show daily life: markets, cooking, cockfights.', 'They also show a naval battle on the Tonle Sap lake.'],
+      tip: '📸 Come late afternoon when the light warms the faces and the crowds thin out.' },
+    { name: 'Ta Prohm', km: 'តាព្រហ្ម', kicker: 'The jungle temple', art: 'roots', colors: ['#b4f461', '#1fb5a0', '#123b20'],
+      meta: [['Founded', '1186'], ['King', 'Jayavarman VII'], ['Faith', 'Buddhist monastery']],
+      text: 'Built to honour the king’s mother, then left mostly as the explorers found it. Giant silk-cotton and strangler fig trees grip the stones with their roots.',
+      facts: ['An inscription says 12,640 people lived and worked here.', 'Featured in the 2001 film Tomb Raider.', 'Wooden walkways protect the fragile ruins.'],
+      tip: '🌿 Go at 7:00 for soft green light and birdsong before the tour groups.' },
+    { name: 'Banteay Srei', km: 'បន្ទាយស្រី', kicker: 'Citadel of women', art: 'gate', colors: ['#ff7eb6', '#ffb347', '#4a1630'],
+      meta: [['Consecrated', '967 AD'], ['Built by', 'Royal courtiers'], ['Faith', 'Hindu (Shiva)']],
+      text: 'A small temple of pink sandstone with the finest carvings in all of Angkor. The details are so delicate they look like carved wood.',
+      facts: ['It was built by courtiers, not a king.', 'About 35 km from town, so pair it with the Landmine Museum or kralan stalls.', 'The doorways are so small adults must duck.'],
+      tip: '🧡 The pink stone glows brightest in early morning sun.' },
+    { name: 'Phnom Kulen', km: 'ភ្នំគូលែន', kicker: 'The sacred mountain', art: 'falls', colors: ['#3ee6c1', '#7ef9de', '#0a3a4a'],
+      meta: [['Famous for', 'AD 802'], ['Founder', 'Jayavarman II'], ['Type', 'National park']],
+      text: 'The birthplace of the Khmer Empire. In 802 Jayavarman II was declared universal king here. Today it is a place of pilgrimage, waterfalls and forest.',
+      facts: ['Hindu lingas are carved into the riverbed so the water is blessed.', 'A large reclining Buddha sits on top of a huge boulder.', 'Laser scans (lidar) revealed a hidden ancient city under the forest.'],
+      tip: '💦 Bring swimwear for the waterfall, and come in the green season when it flows strongest.' },
+    { name: 'Tonle Sap', km: 'ទន្លេសាប', kicker: 'The great lake', art: 'lake', colors: ['#7ef9de', '#3ee6c1', '#06364a'],
+      meta: [['Area', '2,500–16,000 km²'], ['Status', 'UNESCO Biosphere'], ['Since', '1997']],
+      text: 'Southeast Asia’s largest freshwater lake, and the heartbeat of Cambodia. Villages float on the water or stand on tall stilts, rising and falling with the seasons.',
+      facts: ['Its river changes direction twice a year.', 'Home to hundreds of fish species.', 'Prek Toal is a sanctuary for rare large water birds.'],
+      tip: '🛶 Visit a stilt village like Kampong Phluk at sunset, by small wooden boat.' },
+  ];
+
+  const ART = {
+    wat: '<g fill="#0a1714" opacity=".85"><rect x="40" y="150" width="120" height="14"/><path d="M50 150 l4 -40 q6 -24 12 0 l4 40z"/><path d="M130 150 l4 -40 q6 -24 12 0 l4 40z"/><path d="M68 150 l5 -55 q10 -30 20 0 l5 55z"/><path d="M102 150 l5 -55 q10 -30 20 0 l5 55z"/><path d="M83 150 l6 -80 q11 -40 22 0 l6 80z"/></g>',
+    face: '<g fill="none" stroke="#0a1714" stroke-width="5" opacity=".8"><path d="M60 170 L60 70 Q100 20 140 70 L140 170"/><path d="M75 95 q10 -8 20 0 M105 95 q10 -8 20 0"/><path d="M100 100 l-4 20 h8"/><path d="M82 138 q18 12 36 0"/></g>',
+    roots: '<g fill="#0a1714" opacity=".85"><path d="M55 180 V110 H145 V180 H118 V135 H82 V180Z"/><circle cx="100" cy="45" r="38"/><circle cx="68" cy="60" r="24"/><circle cx="132" cy="60" r="24"/><rect x="94" y="60" width="12" height="52"/></g><g fill="none" stroke="#0a1714" stroke-width="6" stroke-linecap="round" opacity=".85"><path d="M96 105 C80 120 62 118 50 150 C44 166 34 172 26 186"/><path d="M104 105 C122 122 140 118 150 150 C155 166 166 172 176 186"/><path d="M98 108 C90 130 74 140 70 180"/></g>',
+    gate: '<g fill="#0a1714" opacity=".8"><path d="M50 180 V100 Q100 30 150 100 V180 H125 V120 Q100 85 75 120 V180Z"/><circle cx="100" cy="72" r="8" fill="none" stroke="#0a1714" stroke-width="3"/></g>',
+    falls: '<g opacity=".85"><path d="M30 60 H90 V180 H30Z M110 60 H170 V180 H110Z" fill="#0a1714"/><path d="M90 60 H110 V180 H90Z" fill="#ffffff" opacity=".6"/><path d="M80 180 q20 -12 40 0" stroke="#fff" stroke-width="3" fill="none"/></g>',
+    lake: '<g opacity=".85"><path d="M0 150 q25 -10 50 0 t50 0 t50 0 t50 0 V200 H0Z" fill="#0a1714"/><g fill="#0a1714"><path d="M60 120 l15 -15 l15 15 v15 h-30z"/><rect x="62" y="135" width="3" height="20"/><rect x="85" y="135" width="3" height="20"/><path d="M120 110 l15 -15 l15 15 v15 h-30z"/><rect x="122" y="125" width="3" height="30"/><rect x="145" y="125" width="3" height="30"/></g></g>',
+  };
+  const artSvg = (t) => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g-${t.art}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t.colors[0]}"/><stop offset=".55" stop-color="${t.colors[1]}"/><stop offset="1" stop-color="${t.colors[2]}"/></linearGradient></defs><rect width="200" height="200" fill="url(#g-${t.art})"/><circle cx="150" cy="50" r="26" fill="#fff" opacity=".35"/>${ART[t.art]}</svg>`;
+
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+  // ---------- Build the ring ----------
+  const ring = $('.sr-ring');
+  const dots = $('.sr-ring-dots');
+  const N = TEMPLES.length;
+  const step = 360 / N;
+  TEMPLES.forEach((t, i) => {
+    const card = document.createElement('button');
+    card.className = 'sr-card';
+    card.style.background = `linear-gradient(160deg, ${t.colors[0]}, ${t.colors[2]})`;
+    card.innerHTML = `${artSvg(t)}<small>${t.kicker}</small><strong>${t.name}</strong><em lang="km">${t.km}</em><span class="sr-open">Tap for the story →</span>`;
+    card.addEventListener('click', () => openModal(i));
+    ring.appendChild(card);
+    const d = document.createElement('button');
+    d.setAttribute('aria-label', t.name);
+    d.addEventListener('click', () => goTo(i));
+    dots.appendChild(d);
+  });
+  const cards = $$('.sr-card', ring);
+  const dotBtns = $$('button', dots);
+  function placeCards() {
+    const w = ring.offsetWidth;
+    const radius = Math.round((w / 2) / Math.tan(Math.PI / N) * 1.18);
+    ring.dataset.radius = radius;
+    cards.forEach((c, i) => { c.style.transform = `rotateY(${i * step}deg) translateZ(${radius}px)`; });
+  }
+
+  const ringSection = $('.sr-ring-section');
+  function ringProgress() {
+    const r = ringSection.getBoundingClientRect();
+    return clamp(-r.top / (r.height - innerHeight));
+  }
+  function goTo(i) {
+    const top = ringSection.offsetTop + (i / (N - 1)) * (ringSection.offsetHeight - innerHeight);
+    scrollTo({ top: top + 2, behavior: reduce ? 'auto' : 'smooth' });
+  }
+  $$('[data-ring]').forEach((b) => b.addEventListener('click', () => {
+    const cur = Math.round(ringProgress() * (N - 1));
+    goTo(clamp(cur + Number(b.dataset.ring), 0, N - 1));
+  }));
+
+  // ---------- Modal ----------
+  const modal = $('.sr-modal');
+  function openModal(i) {
+    const t = TEMPLES[i];
+    $('.sr-modal-art').innerHTML = artSvg(t);
+    $('.sr-m-kicker').textContent = t.kicker;
+    $('.sr-m-name').textContent = t.name;
+    $('.sr-m-km').textContent = t.km;
+    $('.sr-m-meta').innerHTML = t.meta.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
+    $('.sr-m-text').textContent = t.text;
+    $('.sr-m-facts').innerHTML = t.facts.map((f) => `<li>${f}</li>`).join('');
+    $('.sr-m-tip').textContent = t.tip;
+    modal.showModal();
+  }
+  $('.sr-modal-close').addEventListener('click', () => modal.close());
+  modal.addEventListener('click', (e) => { if (e.target === modal) modal.close(); });
+
+  // ---------- Timeline (horizontal pinned scroll) ----------
+  const hSection = $('.sr-h-section');
+  const hTrack = $('.sr-h-track');
+  function sizeTimeline() {
+    const extra = Math.max(0, hTrack.scrollWidth - innerWidth + 40);
+    hSection.style.height = `${innerHeight + extra}px`;
+    hSection.dataset.extra = extra;
+  }
+
+  // ---------- Hero parallax ----------
+  const layers = $$('[data-depth]');
+  let mx = 0, my = 0;
+  addEventListener('pointermove', (e) => {
+    mx = e.clientX / innerWidth - 0.5;
+    my = e.clientY / innerHeight - 0.5;
+  }, { passive: true });
+
+  // ---------- Counters ----------
+  const counters = $$('[data-count]');
+  const io = new IntersectionObserver((entries) => entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    const el = en.target; io.unobserve(el);
+    const end = Number(el.dataset.count), pre = el.dataset.prefix || '', suf = el.dataset.suffix || '';
+    const fmt = (n) => (end > 2100 ? n.toLocaleString('en-US') : String(n));
+    if (reduce) { el.textContent = pre + fmt(end) + suf; return; }
+    const t0 = performance.now();
+    const tick = (now) => {
+      const p = clamp((now - t0) / 1600);
+      el.textContent = pre + fmt(Math.round(end * (1 - Math.pow(1 - p, 3)))) + suf;
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), { threshold: 0.5 });
+  counters.forEach((c) => io.observe(c));
+
+  // ---------- Main animation loop ----------
+  const bar = $('.sr-progress span');
+  const tilts = $$('.tilt-in');
+  const hero = $('.sr-hero');
+  function frame() {
+    const y = scrollY, vh = innerHeight;
+    bar.style.transform = `scaleX(${clamp(y / (document.documentElement.scrollHeight - vh))})`;
+
+    // hero layers
+    if (y < hero.offsetHeight * 1.2) {
+      const hp = clamp(y / hero.offsetHeight);
+      layers.forEach((l) => {
+        const d = Number(l.dataset.depth);
+        if (l.classList.contains('sr-hero-copy')) {
+          l.style.transform = `translate3d(${mx * -20}px, ${y * 0.45}px, 0) scale(${1 + hp * 0.25})`;
+          l.style.opacity = String(1 - hp * 1.6);
+        } else {
+          l.style.transform = `translate3d(${mx * d * -60}px, ${y * (1 - d) * 0.5 + my * d * -20}px, 0) scale(${1 + hp * d * 0.35})`;
         }
-      </dl>
-    </section>
+      });
+    }
 
-    <!-- HOW IT WORKS -->
-    <section id="how" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
-      <p class="font-semibold text-brand">How it works <span lang="km" class="font-khmer font-normal">· របៀបដំណើរការ</span></p>
-      <h2 class="mt-2 max-w-2xl font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">
-        Four steps from idea to live website.
-      </h2>
-      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">បួនជំហាន ពីគំនិតមួយ ទៅជាគេហទំព័រដែលដំណើរការពិតប្រាកដ។</p>
-      <ol class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {
-          steps.map((s, i) => (
-            <li class="rounded-2xl border border-ink/10 bg-white p-6">
-              <div class="flex items-center justify-between">
-                <span class="text-3xl">{s.icon}</span>
-                <span class="font-display text-sm font-bold text-ink/30">0{i + 1}</span>
-              </div>
-              <h3 class="mt-4 font-display text-xl font-bold">
-                {s.title}
-                <span class="km text-base" lang="km">{s.titleKm}</span>
-              </h3>
-              <p class="mt-2 text-muted">
-                {s.text}
-                <span class="km" lang="km">{s.textKm}</span>
-              </p>
-            </li>
-          ))
-        }
-      </ol>
-    </section>
+    // ring rotation
+    const rp = ringProgress();
+    const angle = -rp * step * (N - 1);
+    const tiltX = reduce ? 0 : -8 + Math.sin(rp * Math.PI) * 4;
+    ring.style.transform = `translateZ(-${ring.dataset.radius || 300}px) rotateX(${tiltX}deg) rotateY(${angle}deg)`;
+    const active = Math.round(rp * (N - 1));
+    cards.forEach((c, i) => c.classList.toggle('is-active', i === active));
+    dotBtns.forEach((d, i) => d.classList.toggle('on', i === active));
 
-    <!-- BIG STATEMENT -->
-    <section class="bg-ink text-paper">
-      <div class="mx-auto max-w-4xl px-4 py-20 text-center sm:px-6 sm:py-28">
-        <p class="font-display text-3xl leading-tight font-bold text-balance sm:text-5xl">
-          AI turns out to be <span class="text-sun">very good at writing code.</span> So the most useful skill now is knowing what to ask for.
-        </p>
-        <p lang="km" class="km mt-6 text-xl sm:text-2xl">
-          AI ពិតជាពូកែសរសេរកូដណាស់។ ដូច្នេះ ជំនាញដែលមានប្រយោជន៍បំផុតនាពេលនេះ គឺការដឹងថាត្រូវស្នើសុំអ្វី។
-        </p>
-      </div>
-    </section>
+    // timeline
+    const hr = hSection.getBoundingClientRect();
+    const hp = clamp(-hr.top / (hr.height - vh || 1));
+    hTrack.style.transform = `translate3d(${-hp * Number(hSection.dataset.extra || 0)}px,0,0)`;
 
-    <!-- LESSONS -->
-    <section id="lessons" class="mx-auto max-w-6xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28">
-      <p class="font-semibold text-brand">Lessons <span lang="km" class="font-khmer font-normal">· មេរៀន</span></p>
-      <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">Start here.</h2>
-      <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">ចាប់ផ្តើមនៅទីនេះ។</p>
-      <div class="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {
-          decks.map((deck) => (
-            <a
-              href={`/lesson/${deck.slug}`}
-              class="group flex flex-col rounded-2xl border border-ink/10 bg-white p-6 transition hover:-translate-y-1 hover:border-brand hover:shadow-xl"
-            >
-              <span class="font-display text-sm font-bold tracking-wide text-brand uppercase">{deck.eyebrow}</span>
-              <span class="mt-2 font-display text-2xl font-bold">
-                {deck.title.replace(/^[^—]+—\s*/, '')}
-                {deck.titleKm && <span class="km text-lg" lang="km">{deck.titleKm.replace(/^[^—]+—\s*/, '')}</span>}
-              </span>
-              <span class="mt-2 flex-1 text-muted">
-                {deck.subtitle}
-                {deck.subtitleKm && <span class="km" lang="km">{deck.subtitleKm}</span>}
-              </span>
-              <span class="mt-6 font-semibold text-brand">Open slides <span class="inline-block transition group-hover:translate-x-1">→</span> <span lang="km" class="font-khmer font-normal">បើកស្លាយ</span></span>
-            </a>
-          ))
-        }
-        <a
-          href="/setup"
-          class="group flex flex-col rounded-2xl border border-ink/10 bg-white p-6 transition hover:-translate-y-1 hover:border-brand hover:shadow-xl"
-        >
-          <span class="font-display text-sm font-bold tracking-wide text-brand uppercase">Guide</span>
-          <span class="mt-2 font-display text-2xl font-bold">
-            Set up your Mac
-            <span class="km text-lg" lang="km">រៀបចំកុំព្យូទ័រ Mac របស់អ្នក</span>
-          </span>
-          <span class="mt-2 flex-1 text-muted">
-            Install the Claude app, then let the AI set up the rest of your computer.
-            <span class="km" lang="km">ដំឡើងកម្មវិធី Claude បន្ទាប់មកឱ្យ AI រៀបចំផ្នែកផ្សេងទៀតនៃកុំព្យូទ័ររបស់អ្នក។</span>
-          </span>
-          <span class="mt-6 font-semibold text-brand">Open the guide <span class="inline-block transition group-hover:translate-x-1">→</span> <span lang="km" class="font-khmer font-normal">បើកការណែនាំ</span></span>
-        </a>
-      </div>
-    </section>
+    // 3D tilt-in reveal for elements entering the screen
+    if (!reduce) tilts.forEach((el) => {
+      const top = el.getBoundingClientRect().top;
+      const t = clamp((vh - top) / (vh * 0.55));
+      el.style.transform = `perspective(1100px) rotateX(${(1 - t) * 28}deg) translate3d(0, ${(1 - t) * 70}px, ${(1 - t) * -120}px)`;
+      el.style.opacity = String(0.15 + t * 0.85);
+    });
+    requestAnimationFrame(frame);
+  }
 
-    <!-- WHAT YOU NEED -->
-    <section class="bg-white">
-      <div class="mx-auto grid max-w-6xl gap-12 px-4 py-20 sm:px-6 sm:py-28 lg:grid-cols-[1fr_1.4fr]">
-        <div>
-          <p class="font-semibold text-brand">Before you start <span lang="km" class="font-khmer font-normal">· មុនពេលចាប់ផ្តើម</span></p>
-          <h2 class="mt-2 font-display text-4xl font-extrabold tracking-tight sm:text-5xl">What you need</h2>
-          <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">អ្វីដែលអ្នកត្រូវការ</p>
-          <p class="mt-4 text-lg text-muted">
-            That's the whole list. Everything else, the AI will help you install.
-            <span class="km" lang="km">នោះហើយជាបញ្ជីទាំងមូល។ អ្វីៗផ្សេងទៀត AI នឹងជួយអ្នកដំឡើង។</span>
-          </p>
-        </div>
-        <ul class="grid gap-4 sm:grid-cols-2">
-          {
-            needs.map((n) => (
-              <li class="rounded-2xl bg-paper p-6">
-                <span class="grid size-8 place-items-center rounded-full bg-leaf text-sm font-bold text-paper">✓</span>
-                <h3 class="mt-4 font-display text-lg font-bold">
-                  {n.title}
-                  <span class="km text-base" lang="km">{n.titleKm}</span>
-                </h3>
-                <p class="mt-1 text-muted">
-                  {n.text}
-                  <span class="km" lang="km">{n.textKm}</span>
-                </p>
-              </li>
-            ))
-          }
-        </ul>
-      </div>
-    </section>
+  // ---------- Card hover tilt ----------
+  $$('.sr-stat, .sr-era, .sr-pass').forEach((el) => {
+    el.addEventListener('pointermove', (e) => {
+      const r = el.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5, yy = (e.clientY - r.top) / r.height - 0.5;
+      el.style.translate = '0 -4px';
+      el.style.background = `radial-gradient(circle at ${(x + 0.5) * 100}% ${(yy + 0.5) * 100}%, rgba(62,230,193,.22), rgba(255,255,255,.03) 60%)`;
+    });
+    el.addEventListener('pointerleave', () => { el.style.translate = ''; el.style.background = ''; });
+  });
 
-    <!-- FAQ -->
-    <section class="mx-auto max-w-3xl px-4 py-20 sm:px-6 sm:py-28">
-      <h2 class="text-center font-display text-4xl font-extrabold tracking-tight">Questions</h2>
-      <p class="km mt-2 text-center text-xl font-semibold" lang="km">សំណួរ</p>
-      <div class="mt-10 divide-y divide-ink/10 border-y border-ink/10">
-        {
-          faqs.map((f) => (
-            <details class="group py-5">
-              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 font-display text-lg font-bold">
-                <span>
-                  {f.q}
-                  <span class="km text-base" lang="km">{f.qKm}</span>
-                </span>
-                <span class="text-2xl text-brand transition group-open:rotate-45">+</span>
-              </summary>
-              <p class="mt-3 text-muted">
-                {f.a}
-                <span class="km" lang="km">{f.aKm}</span>
-              </p>
-            </details>
-          ))
-        }
-      </div>
-    </section>
+  // ---------- Flip cards (tap on phones) ----------
+  $$('.sr-flip').forEach((f) => f.addEventListener('click', () => f.classList.toggle('flipped')));
 
-    <!-- CALL TO ACTION -->
-    <section class="px-4 pb-20 sm:px-6">
-      <div class="mx-auto max-w-6xl rounded-3xl bg-brand px-6 py-16 text-center text-paper sm:py-20">
-        <h2 class="font-display text-4xl font-extrabold tracking-tight text-balance sm:text-5xl">Ready? Let's build something.</h2>
-        <p class="km mt-3 text-xl font-semibold sm:text-2xl" lang="km">រួចរាល់ហើយឬនៅ? តោះបង្កើតអ្វីមួយ។</p>
-        <a href="/lesson/day-1" class="mt-8 inline-block rounded-full bg-paper px-8 py-4 font-semibold text-ink transition hover:bg-sun">
-          Start with Day 1 → <span lang="km" class="font-khmer font-normal">ចាប់ផ្តើមថ្ងៃទី ១</span>
-        </a>
-      </div>
-    </section>
-  </main>
+  // ---------- Lake slider ----------
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const AREA = [9000, 6000, 3500, 2700, 2500, 3500, 6500, 11000, 15000, 16000, 14000, 11500];
+  const slider = $('#month');
+  function updateLake() {
+    const m = Number(slider.value), a = AREA[m];
+    const s = 0.35 + (a - 2500) / (16000 - 2500) * 0.65;
+    $('.sr-lake-shape').style.transform = `scale(${s})`;
+    $('.sr-houses').style.transform = `translateY(${(1 - s) * 30}px)`;
+    $('[data-lake="month"]').textContent = MONTHS[m];
+    $('[data-lake="area"]').textContent = `${a.toLocaleString('en-US')} km²`;
+    $('[data-lake="season"]').textContent = m >= 5 && m <= 9 ? 'Rainy' : 'Dry';
+  }
+  slider.addEventListener('input', updateLake);
 
-  <Footer />
+  // ---------- Season tabs ----------
+  const SEASONS = [
+    ['20–31°C', 'November – February', 'The most popular time. Clear sunrises over Angkor Wat, cool mornings and blue skies. Book rooms early.'],
+    ['up to 38°C', 'March – May', 'Very hot and dry. Visit temples at dawn, rest at midday, and celebrate Khmer New Year in mid-April.'],
+    ['24–33°C', 'June – October', 'The green season: short afternoon rain, full moats, lush jungle, strong waterfalls and fewer crowds.'],
+  ];
+  const tabs = $$('[data-season]');
+  const body = $('.sr-season-body');
+  tabs.forEach((t) => t.addEventListener('click', () => {
+    tabs.forEach((x) => x.setAttribute('aria-selected', String(x === t)));
+    body.classList.add('swap');
+    setTimeout(() => {
+      const [temp, title, text] = SEASONS[Number(t.dataset.season)];
+      $('.sr-season-temp').textContent = temp;
+      $('.sr-season-title').textContent = title;
+      $('.sr-season-text').textContent = text;
+      body.classList.remove('swap');
+    }, 250);
+  }));
+
+  // ---------- Fireflies ----------
+  const cv = $('.sr-fireflies'), ctx = cv.getContext('2d');
+  let flies = [];
+  function sizeCanvas() {
+    const dpr = Math.min(devicePixelRatio || 1, 2);
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const n = innerWidth < 700 ? 22 : 45;
+    flies = Array.from({ length: n }, () => ({ x: Math.random() * innerWidth, y: Math.random() * innerHeight, r: 1 + Math.random() * 2, a: Math.random() * 6.28, s: 0.2 + Math.random() * 0.5, h: Math.random() < 0.7 ? '180,244,97' : '255,210,122' }));
+  }
+  function drawFlies(now) {
+    ctx.clearRect(0, 0, innerWidth, innerHeight);
+    flies.forEach((f) => {
+      f.a += 0.01; f.x += Math.cos(f.a) * f.s; f.y += Math.sin(f.a * 0.7) * f.s - 0.1;
+      if (f.y < -10) f.y = innerHeight + 10; if (f.x < -10) f.x = innerWidth + 10; if (f.x > innerWidth + 10) f.x = -10;
+      const glow = 0.4 + 0.6 * Math.abs(Math.sin(now / 900 + f.a * 3));
+      ctx.beginPath(); ctx.fillStyle = `rgba(${f.h},${glow})`; ctx.shadowBlur = 12; ctx.shadowColor = `rgba(${f.h},1)`;
+      ctx.arc(f.x, f.y, f.r, 0, 6.28); ctx.fill();
+    });
+    requestAnimationFrame(drawFlies);
+  }
+
+  function onResize() { placeCards(); sizeTimeline(); sizeCanvas(); }
+  addEventListener('resize', onResize);
+  onResize();
+  updateLake();
+  requestAnimationFrame(frame);
+  if (!reduce) requestAnimationFrame(drawFlies);
+})();
+</script>
+<!-- PAGE:END -->
 </Base>
