@@ -187,12 +187,12 @@ import Base from '../layouts/Base.astro';
       <p class="sr-muted">Hover or tap a card to flip it.</p>
     </div>
     <div class="sr-flip-grid">
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🐟</i><b>Fish Amok</b><em lang="km">អាម៉ុក</em></span><span class="sr-back">Fish steamed in banana leaf with coconut milk and <i>kroeung</i>, a fresh paste of lemongrass, turmeric and galangal.</span></span></button>
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍜</i><b>Num Banh Chok</b><em lang="km">នំបញ្ចុក</em></span><span class="sr-back">Fresh rice noodles with green fish curry and raw herbs. The classic Khmer breakfast, sold from baskets at dawn.</span></span></button>
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥩</i><b>Lok Lak</b><em lang="km">ឡុកឡាក់</em></span><span class="sr-back">Stir-fried beef cubes over lettuce and tomato, dipped in lime juice with Kampot black pepper.</span></span></button>
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🎋</i><b>Kralan</b><em lang="km">ក្រឡាន</em></span><span class="sr-back">Sticky rice, beans and coconut roasted inside bamboo tubes. Look for roadside stalls on the way to Banteay Srei.</span></span></button>
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍛</i><b>Khmer Red Curry</b><em lang="km">ការី</em></span><span class="sr-back">Mild coconut curry with sweet potato and chicken, often eaten with baguette. Made for weddings and festivals.</span></span></button>
-      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥥</i><b>Nom Krok</b><em lang="km">នំគ្រក</em></span><span class="sr-back">Little coconut-rice cakes, crispy outside and soft inside, cooked in a clay pan over charcoal.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🐟</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Fish_Amok-_Khmer_specialty.jpg?width=500" alt="Fish amok served in banana-leaf cups with rice" loading="lazy" onerror="this.remove()" /><b>Fish Amok</b><em lang="km">អាម៉ុក</em></span><span class="sr-back">Fish steamed in banana leaf with coconut milk and <i>kroeung</i>, a fresh paste of lemongrass, turmeric and galangal.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍜</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Num_Banh_Chok_(cropped).jpg?width=500" alt="A bowl of num banh chok rice noodles with green curry and herbs" loading="lazy" onerror="this.remove()" /><b>Num Banh Chok</b><em lang="km">នំបញ្ចុក</em></span><span class="sr-back">Fresh rice noodles with green fish curry and raw herbs. The classic Khmer breakfast, sold from baskets at dawn.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥩</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Beef_Lok_Lak.jpg?width=500" alt="Beef lok lak with rice and a fried egg" loading="lazy" onerror="this.remove()" /><b>Lok Lak</b><em lang="km">ឡុកឡាក់</em></span><span class="sr-back">Stir-fried beef cubes over lettuce and tomato, dipped in lime juice with Kampot black pepper.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🎋</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Roadside_kralan_vendor,_Siem_Reap_Province,_2018_(01).jpg?width=500" alt="Bamboo tubes of kralan roasting at a roadside stall" loading="lazy" onerror="this.remove()" /><b>Kralan</b><em lang="km">ក្រឡាន</em></span><span class="sr-back">Sticky rice, beans and coconut roasted inside bamboo tubes. Look for roadside stalls on the way to Banteay Srei.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🍛</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Cambodian_chicken_curry.jpg?width=500" alt="A bowl of Cambodian chicken curry" loading="lazy" onerror="this.remove()" /><b>Khmer Red Curry</b><em lang="km">ការី</em></span><span class="sr-back">Mild coconut curry with sweet potato and chicken, often eaten with baguette. Made for weddings and festivals.</span></span></button>
+      <button class="sr-flip tilt-in"><span class="sr-flip-in"><span class="sr-front"><i>🥥</i><img class="sr-food-photo" src="https://commons.wikimedia.org/wiki/Special:FilePath/Khanom_Krok.jpg?width=500" alt="Little round coconut rice cakes in a pan" loading="lazy" onerror="this.remove()" /><b>Nom Krok</b><em lang="km">នំគ្រក</em></span><span class="sr-back">Little coconut-rice cakes, crispy outside and soft inside, cooked in a clay pan over charcoal.</span></span></button>
     </div>
   </section>
 
@@ -233,6 +233,20 @@ import Base from '../layouts/Base.astro';
   <footer class="sr-footer">
     <p class="sr-grad sr-footer-big" lang="km">សូមស្វាគមន៍</p>
     <p>Welcome to Siem Reap. A demo website made by talking to AI.</p>
+    <p class="sr-credits">Photos from Wikimedia Commons:
+      <a href="https://commons.wikimedia.org/wiki/File:Sunrise_at_Angkor_Wat_Cambodia.jpg">Angkor Wat</a> by Vladimir Pankratov (CC BY-SA 2.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:20171127_Bayon_Temple_Angkor_Thom_4754_DxO.jpg">Bayon</a> by Jakub Hałun (CC BY-SA 4.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:20191210_Ta_Prohm_sprung_tree_roots-2.jpg">Ta Prohm</a> by Balon Greyjoy (public domain) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Banteay_Srei_temple_(Unsplash).jpg">Banteay Srei</a> by JJ Ying (CC0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Phnom_Kulen_waterfall.jpg">Phnom Kulen</a> by MoonsMoon (CC BY 4.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Houses_on_the_water_in_Kampong_Phlouk.jpg">Kampong Phluk</a> by Krzysztof Golik (CC BY-SA 4.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Fish_Amok-_Khmer_specialty.jpg">Fish amok</a> by Ben Yapp (CC BY 2.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Num_Banh_Chok_(cropped).jpg">Num banh chok</a> by Thomas Wanhoff (CC BY-SA 2.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Beef_Lok_Lak.jpg">Lok lak</a> by James Antrobus (CC BY 2.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Roadside_kralan_vendor,_Siem_Reap_Province,_2018_(01).jpg">Kralan</a> by Bahnfrend (CC BY-SA 4.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Cambodian_chicken_curry.jpg">Curry</a> by stu_spivack (CC BY-SA 2.0) ·
+      <a href="https://commons.wikimedia.org/wiki/File:Khanom_Krok.jpg">Nom krok</a> by Boonlert (CC0)
+    </p>
   </footer>
 
   <!-- Detail popup for the ring cards -->
@@ -353,9 +367,11 @@ import Base from '../layouts/Base.astro';
   .sr-ring { position: relative; width: var(--card-w); height: calc(var(--card-w) * 1.35); transform-style: preserve-3d; --card-w: 200px; }
   @media (min-width: 700px) { .sr-ring { --card-w: 250px; } }
   .sr-card { position: absolute; inset: 0; border-radius: 26px; padding: 18px; display: flex; flex-direction: column; justify-content: flex-end; color: var(--sr-text); text-align: left; cursor: pointer; border: 1px solid rgba(255,255,255,.18); overflow: hidden; backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: filter .4s, box-shadow .4s; font: inherit; }
+  .sr-card .sr-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; }
   .sr-card svg { position: absolute; inset: 0; width: 100%; height: 70%; opacity: .95; }
-  .sr-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(3,19,15,.85)); z-index: 0; }
-  .sr-card > * { position: relative; z-index: 1; }
+  .sr-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgba(3,19,15,.85)); z-index: 1; }
+  .sr-card > * { position: relative; z-index: 2; }
+  .sr-card > svg { z-index: 0; }
   .sr-card small { color: var(--sr-lime); font-weight: 700; letter-spacing: .1em; text-transform: uppercase; font-size: .68rem; }
   .sr-card strong { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui; font-size: 1.45rem; line-height: 1.1; }
   .sr-card em { font-style: normal; color: var(--sr-mint); font-size: .95rem; }
@@ -407,6 +423,11 @@ import Base from '../layouts/Base.astro';
   .sr-front, .sr-back { position: absolute; inset: 0; border-radius: 22px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; border: 1px solid var(--sr-line); }
   .sr-front { background: linear-gradient(160deg, rgba(180,244,97,.16), rgba(62,230,193,.06) 50%, rgba(255,126,182,.12)); }
   .sr-front i { font-style: normal; font-size: 2.6rem; }
+  .sr-front { isolation: isolate; overflow: hidden; }
+  .sr-front:has(.sr-food-photo) { justify-content: flex-end; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+  .sr-front:has(.sr-food-photo) i { display: none; }
+  .sr-front:has(.sr-food-photo)::before { content: ""; position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 35%, rgba(3,19,15,.9)); }
+  .sr-food-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; }
   .sr-front b { font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", system-ui; font-size: 1.2rem; }
   .sr-front em { font-style: normal; color: var(--sr-mint); }
   .sr-back { transform: rotateY(180deg); background: linear-gradient(160deg, #0f5c4a, #0a3a4a); color: #e8fff6; font-size: .92rem; line-height: 1.5; text-align: center; }
@@ -439,6 +460,8 @@ import Base from '../layouts/Base.astro';
   .sr-tips b { display: block; color: var(--sr-text); margin-bottom: 4px; }
 
   .sr-footer { text-align: center; padding: 60px 16px 80px; color: var(--sr-muted); border-top: 1px solid var(--sr-line); }
+  .sr-credits { max-width: 860px; margin: 18px auto 0; font-size: .75rem; line-height: 1.7; opacity: .75; }
+  .sr-credits a { color: inherit; }
   .sr-footer-big { font-size: clamp(2.4rem, 8vw, 5rem); font-weight: 700; margin: 0 0 6px; line-height: 1.6; }
 
   /* modal */
@@ -447,8 +470,8 @@ import Base from '../layouts/Base.astro';
   @media (min-width: 760px) { .sr-modal[open] { grid-template-columns: .9fr 1.1fr; } }
   .sr-modal::backdrop { background: rgba(2, 10, 8, .7); backdrop-filter: blur(8px); }
   @keyframes sr-pop { from { opacity: 0; transform: perspective(900px) rotateX(18deg) translateY(40px) scale(.94); } }
-  .sr-modal-art { min-height: 200px; position: relative; }
-  .sr-modal-art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .sr-modal-art { min-height: 240px; position: relative; }
+  .sr-modal-art svg, .sr-modal-art .sr-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
   .sr-modal-body { padding: 26px; position: relative; }
   .sr-modal-close { position: absolute; top: 14px; right: 14px; width: 40px; height: 40px; border-radius: 50%; border: 1px solid var(--sr-line); background: var(--sr-glass); color: var(--sr-text); cursor: pointer; font-size: 1rem; }
   .sr-m-name { font-size: 2.2rem; margin: 6px 0 0; line-height: 1.05; }
@@ -473,32 +496,32 @@ import Base from '../layouts/Base.astro';
 (() => {
   // ---------- TEMPLE DATA: edit text here ----------
   const TEMPLES = [
-    { name: 'Angkor Wat', km: 'អង្គរវត្ត', kicker: 'The temple city', art: 'wat', colors: ['#ffb347', '#ff7eb6', '#2a1b4a'],
+    { name: 'Angkor Wat', photo: 'Sunrise at Angkor Wat Cambodia.jpg', km: 'អង្គរវត្ត', kicker: 'The temple city', art: 'wat', colors: ['#ffb347', '#ff7eb6', '#2a1b4a'],
       meta: [['Built', 'c. 1113–1150'], ['King', 'Suryavarman II'], ['Faith', 'Hindu → Buddhist']],
       text: 'The largest religious monument in the world, built as a model of Mount Meru, home of the gods. It began as a temple to Vishnu and later became Buddhist. It has never been fully abandoned.',
       facts: ['Its five lotus-bud towers appear on Cambodia’s national flag.', 'The central tower rises about 65 m above the ground.', 'A moat about 190 m wide surrounds it.', 'Long galleries show the famous Churning of the Ocean of Milk.'],
       tip: '🌅 Sunrise over the north reflecting pool is magic, especially near the spring equinox.' },
-    { name: 'Bayon', km: 'បាយ័ន', kicker: 'Temple of faces', art: 'face', colors: ['#3ee6c1', '#b4f461', '#0b3d4a'],
+    { name: 'Bayon', photo: '20171127 Bayon Temple Angkor Thom 4754 DxO.jpg', km: 'បាយ័ន', kicker: 'Temple of faces', art: 'face', colors: ['#3ee6c1', '#b4f461', '#0b3d4a'],
       meta: [['Built', 'Late 12th c.'], ['King', 'Jayavarman VII'], ['Faith', 'Mahayana Buddhist']],
       text: 'The heart of the walled city of Angkor Thom. More than 200 calm, smiling stone faces look out from its towers in every direction.',
       facts: ['Angkor Thom covers about 9 km², with five great gates.', 'Bas-reliefs show daily life: markets, cooking, cockfights.', 'They also show a naval battle on the Tonle Sap lake.'],
       tip: '📸 Come late afternoon when the light warms the faces and the crowds thin out.' },
-    { name: 'Ta Prohm', km: 'តាព្រហ្ម', kicker: 'The jungle temple', art: 'roots', colors: ['#b4f461', '#1fb5a0', '#123b20'],
+    { name: 'Ta Prohm', photo: '20191210 Ta Prohm sprung tree roots-2.jpg', km: 'តាព្រហ្ម', kicker: 'The jungle temple', art: 'roots', colors: ['#b4f461', '#1fb5a0', '#123b20'],
       meta: [['Founded', '1186'], ['King', 'Jayavarman VII'], ['Faith', 'Buddhist monastery']],
       text: 'Built to honour the king’s mother, then left mostly as the explorers found it. Giant silk-cotton and strangler fig trees grip the stones with their roots.',
       facts: ['An inscription says 12,640 people lived and worked here.', 'Featured in the 2001 film Tomb Raider.', 'Wooden walkways protect the fragile ruins.'],
       tip: '🌿 Go at 7:00 for soft green light and birdsong before the tour groups.' },
-    { name: 'Banteay Srei', km: 'បន្ទាយស្រី', kicker: 'Citadel of women', art: 'gate', colors: ['#ff7eb6', '#ffb347', '#4a1630'],
+    { name: 'Banteay Srei', photo: 'Banteay Srei temple (Unsplash).jpg', km: 'បន្ទាយស្រី', kicker: 'Citadel of women', art: 'gate', colors: ['#ff7eb6', '#ffb347', '#4a1630'],
       meta: [['Consecrated', '967 AD'], ['Built by', 'Royal courtiers'], ['Faith', 'Hindu (Shiva)']],
       text: 'A small temple of pink sandstone with the finest carvings in all of Angkor. The details are so delicate they look like carved wood.',
       facts: ['It was built by courtiers, not a king.', 'About 35 km from town, so pair it with the Landmine Museum or kralan stalls.', 'The doorways are so small adults must duck.'],
       tip: '🧡 The pink stone glows brightest in early morning sun.' },
-    { name: 'Phnom Kulen', km: 'ភ្នំគូលែន', kicker: 'The sacred mountain', art: 'falls', colors: ['#3ee6c1', '#7ef9de', '#0a3a4a'],
+    { name: 'Phnom Kulen', photo: 'Phnom Kulen waterfall.jpg', km: 'ភ្នំគូលែន', kicker: 'The sacred mountain', art: 'falls', colors: ['#3ee6c1', '#7ef9de', '#0a3a4a'],
       meta: [['Famous for', 'AD 802'], ['Founder', 'Jayavarman II'], ['Type', 'National park']],
       text: 'The birthplace of the Khmer Empire. In 802 Jayavarman II was declared universal king here. Today it is a place of pilgrimage, waterfalls and forest.',
       facts: ['Hindu lingas are carved into the riverbed so the water is blessed.', 'A large reclining Buddha sits on top of a huge boulder.', 'Laser scans (lidar) revealed a hidden ancient city under the forest.'],
       tip: '💦 Bring swimwear for the waterfall, and come in the green season when it flows strongest.' },
-    { name: 'Tonle Sap', km: 'ទន្លេសាប', kicker: 'The great lake', art: 'lake', colors: ['#7ef9de', '#3ee6c1', '#06364a'],
+    { name: 'Tonle Sap', photo: 'Houses on the water in Kampong Phlouk.jpg', km: 'ទន្លេសាប', kicker: 'The great lake', art: 'lake', colors: ['#7ef9de', '#3ee6c1', '#06364a'],
       meta: [['Area', '2,500–16,000 km²'], ['Status', 'UNESCO Biosphere'], ['Since', '1997']],
       text: 'Southeast Asia’s largest freshwater lake, and the heartbeat of Cambodia. Villages float on the water or stand on tall stilts, rising and falling with the seasons.',
       facts: ['Its river changes direction twice a year.', 'Home to hundreds of fish species.', 'Prek Toal is a sanctuary for rare large water birds.'],
@@ -513,6 +536,9 @@ import Base from '../layouts/Base.astro';
     falls: '<g opacity=".85"><path d="M30 60 H90 V180 H30Z M110 60 H170 V180 H110Z" fill="#0a1714"/><path d="M90 60 H110 V180 H90Z" fill="#ffffff" opacity=".6"/><path d="M80 180 q20 -12 40 0" stroke="#fff" stroke-width="3" fill="none"/></g>',
     lake: '<g opacity=".85"><path d="M0 150 q25 -10 50 0 t50 0 t50 0 t50 0 V200 H0Z" fill="#0a1714"/><g fill="#0a1714"><path d="M60 120 l15 -15 l15 15 v15 h-30z"/><rect x="62" y="135" width="3" height="20"/><rect x="85" y="135" width="3" height="20"/><path d="M120 110 l15 -15 l15 15 v15 h-30z"/><rect x="122" y="125" width="3" height="30"/><rect x="145" y="125" width="3" height="30"/></g></g>',
   };
+  // Photos come from Wikimedia Commons (credits are in the footer).
+  const photoUrl = (file, width) => `https://commons.wikimedia.org/wiki/Special:FilePath/${encodeURIComponent(file)}?width=${width}`;
+  const photoImg = (t, width) => (t.photo ? `<img class="sr-photo" src="${photoUrl(t.photo, width)}" alt="${t.name}" loading="lazy" onerror="this.remove()">` : '');
   const artSvg = (t) => `<svg viewBox="0 0 200 200" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="g-${t.art}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${t.colors[0]}"/><stop offset=".55" stop-color="${t.colors[1]}"/><stop offset="1" stop-color="${t.colors[2]}"/></linearGradient></defs><rect width="200" height="200" fill="url(#g-${t.art})"/><circle cx="150" cy="50" r="26" fill="#fff" opacity=".35"/>${ART[t.art]}</svg>`;
 
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -529,7 +555,7 @@ import Base from '../layouts/Base.astro';
     const card = document.createElement('button');
     card.className = 'sr-card';
     card.style.background = `linear-gradient(160deg, ${t.colors[0]}, ${t.colors[2]})`;
-    card.innerHTML = `${artSvg(t)}<small>${t.kicker}</small><strong>${t.name}</strong><em lang="km">${t.km}</em><span class="sr-open">Tap for the story →</span>`;
+    card.innerHTML = `${artSvg(t)}${photoImg(t, 500)}<small>${t.kicker}</small><strong>${t.name}</strong><em lang="km">${t.km}</em><span class="sr-open">Tap for the story →</span>`;
     card.addEventListener('click', () => openModal(i));
     ring.appendChild(card);
     const d = document.createElement('button');
@@ -564,7 +590,7 @@ import Base from '../layouts/Base.astro';
   const modal = $('.sr-modal');
   function openModal(i) {
     const t = TEMPLES[i];
-    $('.sr-modal-art').innerHTML = artSvg(t);
+    $('.sr-modal-art').innerHTML = artSvg(t) + photoImg(t, 960);
     $('.sr-m-kicker').textContent = t.kicker;
     $('.sr-m-name').textContent = t.name;
     $('.sr-m-km').textContent = t.km;
